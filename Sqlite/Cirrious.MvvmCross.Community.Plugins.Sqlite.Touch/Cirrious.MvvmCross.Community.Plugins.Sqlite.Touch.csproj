@@ -11,6 +11,8 @@
     <RootNamespace>Cirrious.MvvmCross.Community.Plugins.Sqlite.Touch</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>Cirrious.MvvmCross.Community.Plugins.Sqlite.Touch</AssemblyName>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <NoStdLib>True</NoStdLib>
@@ -35,25 +37,25 @@
     <DocumentationFile>..\..\bin\Release\Mvx\Touch\Cirrious.MvvmCross.Community.Plugins.Sqlite.Touch.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cirrious.CrossCore, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e16445fd9b451819, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\MvvmCross.HotTuna.CrossCore.3.1.1\lib\MonoTouch\Cirrious.CrossCore.dll</HintPath>
+    <Reference Include="Cirrious.CrossCore">
+      <HintPath>..\..\packages\MvvmCross.HotTuna.CrossCore.3.2.1-beta3\lib\MonoTouch\Cirrious.CrossCore.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Cirrious.CrossCore.Touch, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\MvvmCross.HotTuna.CrossCore.3.1.1\lib\MonoTouch\Cirrious.CrossCore.Touch.dll</HintPath>
+    <Reference Include="Cirrious.CrossCore.Touch">
+      <HintPath>..\..\packages\MvvmCross.HotTuna.CrossCore.3.2.1-beta3\lib\MonoTouch\Cirrious.CrossCore.Touch.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Cirrious.MvvmCross.Binding, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\MvvmCross.HotTuna.CrossCore.3.1.1\lib\MonoTouch\Cirrious.MvvmCross.Binding.dll</HintPath>
+    <Reference Include="Cirrious.MvvmCross.Binding">
+      <HintPath>..\..\packages\MvvmCross.HotTuna.CrossCore.3.2.1-beta3\lib\MonoTouch\Cirrious.MvvmCross.Binding.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Cirrious.MvvmCross.Binding.Touch, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\MvvmCross.HotTuna.CrossCore.3.1.1\lib\MonoTouch\Cirrious.MvvmCross.Binding.Touch.dll</HintPath>
+    <Reference Include="Cirrious.MvvmCross.Binding.Touch">
+      <HintPath>..\..\packages\MvvmCross.HotTuna.CrossCore.3.2.1-beta3\lib\MonoTouch\Cirrious.MvvmCross.Binding.Touch.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Cirrious.MvvmCross.Localization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\MvvmCross.HotTuna.CrossCore.3.1.1\lib\MonoTouch\Cirrious.MvvmCross.Localization.dll</HintPath>
+    <Reference Include="Cirrious.MvvmCross.Localization">
+      <HintPath>..\..\packages\MvvmCross.HotTuna.CrossCore.3.2.1-beta3\lib\MonoTouch\Cirrious.MvvmCross.Localization.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="monotouch">
     </Reference>
@@ -82,4 +84,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
 </Project>

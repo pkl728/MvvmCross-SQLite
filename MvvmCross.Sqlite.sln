@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cirrious.MvvmCross.Community.Plugins.Sqlite", "Sqlite\Cirrious.MvvmCross.Community.Plugins.Sqlite\Cirrious.MvvmCross.Community.Plugins.Sqlite.csproj", "{72654B8A-5F78-4BDF-BFBB-057DDDF314F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cirrious.MvvmCross.Community.Plugins.Sqlite.Droid", "Sqlite\Cirrious.MvvmCross.Community.Plugins.Sqlite.Droid\Cirrious.MvvmCross.Community.Plugins.Sqlite.Droid.csproj", "{E7909D1D-415A-4E35-8A08-8970BA605F2F}"
@@ -20,6 +22,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSqliteTouch", "Tests\TestSqliteTouch\TestSqliteTouch.csproj", "{CF80726C-861B-426D-A287-CAE1F95CC1E5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSqliteDroid", "Tests\TestSqliteDroid\TestSqliteDroid.csproj", "{A1F42E8A-6386-4195-9C4C-AA5B0FFA4F4B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5EF5F19C-B51A-4961-8BAC-7BD778FBECE3}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
