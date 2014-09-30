@@ -259,6 +259,11 @@ namespace Cirrious.MvvmCross.Community.Plugins.Sqlite
         }
     }
 
+    [AttributeUsage(AttributeTargets.Property)]
+    public class NotNullAttribute : Attribute
+    {
+    }
+
     public interface ITableMapping
     {
         string TableName { get; }

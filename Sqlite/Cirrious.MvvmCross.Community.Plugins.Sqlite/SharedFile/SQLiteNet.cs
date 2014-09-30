@@ -38,13 +38,10 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-
-using Cirrious.CrossCore;
 #if !USE_SQLITEPCL_RAW
 using System.Runtime.InteropServices;
 #endif
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Reflection;
 using System.Linq;
 using System.Linq.Expressions;
@@ -1058,12 +1055,10 @@ namespace Community.SQLite
 				if (Int32.TryParse (savepoint.Substring (firstLen + 1), out depth)) {
 					// TODO: Mild race here, but inescapable without locking almost everywhere.
 					if (0 <= depth && depth < _transactionDepth) {
-#if NETFX_CORE || USE_SQLITEPCL_RAW
-                        Volatile.Write (ref _transactionDepth, depth);
-#elif SILVERLIGHT
+#if SILVERLIGHT
 						_transactionDepth = depth;
 #else
-                        Thread.VolatileWrite (ref _transactionDepth, depth);
+                        Volatile.Write(ref _transactionDepth, depth);
 #endif
                         Execute (cmd + savepoint);
 						return;
@@ -1341,10 +1336,7 @@ namespace Community.SQLite
 			var insertCmd = map.GetInsertCommand (this, extra);
 			int count;
 
-			lock (insertCmd) {
-				// We lock here to protect the prepared statement returned via GetInsertCommand.
-				// A SQLite prepared statement can be bound for only one operation at a time.
-				try {
+		    try {
 					count = insertCmd.ExecuteNonQuery (vals);
 				} catch (SQLiteException ex) {
 					if (SQLite3.ExtendedErrCode (this.Handle) == SQLite3.ExtendedResult.ConstraintNotNull) {
@@ -1353,12 +1345,13 @@ namespace Community.SQLite
 					throw;
 				}
 
-				if (map.HasAutoIncPK) {
-					var id = SQLite3.LastInsertRowid (Handle);
-					map.SetAutoIncPK (obj, id);
-				}
-			}
-			if (count > 0)
+	        if (map.HasAutoIncPK)
+	        {
+	            var id = SQLite3.LastInsertRowid(Handle);
+	            map.SetAutoIncPK(obj, id);
+	        }
+
+	        if (count > 0)
 				OnTableChanged (map, NotifyTableChangedAction.Insert);
 
 			return count;
@@ -1689,7 +1682,6 @@ namespace Community.SQLite
 				// People should not be calling Get/Find without a PK
 				GetByPrimaryKeySql = string.Format ("select * from \"{0}\" limit 1", TableName);
 			}
-            _insertCommandMap = new ImmutableDictionary<string, PreparedSqlLiteInsertCommand>();
 		}
 
 		public bool HasAutoIncPK { get; private set; }
@@ -1730,21 +1722,24 @@ namespace Community.SQLite
 			var exact = Columns.FirstOrDefault (c => c.Name == columnName);
 			return exact;
 		}
-		
-		ConcurrentDictionary<string, PreparedSqlLiteInsertCommand> _insertCommandMap;
+
+	    PreparedSqlLiteInsertCommand _insertCommand;
+	    string _insertCommandExtra;
 
 		public PreparedSqlLiteInsertCommand GetInsertCommand(SQLiteConnection conn, string extra)
 		{
-			PreparedSqlLiteInsertCommand prepCmd;
-			if (!_insertCommandMap.TryGetValue (extra, out prepCmd)) {
-				prepCmd = CreateInsertCommand (conn, extra);
-				if (!_insertCommandMap.TryAdd (extra, prepCmd)) {
-					// Concurrent add attempt beat us.
-					prepCmd.Dispose ();
-					_insertCommandMap.TryGetValue (extra, out prepCmd);
-				}
-			}
-			return prepCmd;
+		    if (_insertCommand == null)
+		    {
+		        _insertCommand = CreateInsertCommand(conn, extra);
+		        _insertCommandExtra = extra;
+		    }
+            else if (_insertCommandExtra != extra)
+            {
+                _insertCommand.Dispose();
+                _insertCommand = CreateInsertCommand(conn, extra);
+                _insertCommandExtra = extra;
+            }
+		    return _insertCommand;
 		}
 		
 		public PreparedSqlLiteInsertCommand CreateInsertCommand(SQLiteConnection conn, string extra)
@@ -1778,10 +1773,11 @@ namespace Community.SQLite
 		
 		protected internal void Dispose()
 		{
-			foreach (var pair in _insertCommandMap) {
-				pair.Value.Dispose ();
-			}
-			_insertCommandMap = null;
+		    if (_insertCommand != null)
+		    {
+		        _insertCommand.Dispose();
+		        _insertCommand = null;
+		    }
 		}
 
 		public class Column
@@ -1840,21 +1836,7 @@ namespace Community.SQLite
 
 			public void SetValue (object obj, object val)
 			{
-			    var propType = _prop.PropertyType;
-			    if (propType.IsNullableEnum())
-			    {
-#if !USE_NEW_REFLECTION_API
-			        var nullableType = propType.GetGenericArguments()[0];
-#else
-                    var nullableType = propType.GetTypeInfo().GenericTypeArguments[0];
-#endif
-			        object result = val == null ? null : Enum.Parse(nullableType, val.ToString(), false);
-			        _prop.SetValue(obj, val, null);
-			    }
-			    else
-			    {
-                    _prop.SetValue(obj, val, null);
-			    }
+                _prop.SetValue(obj, val, null);
 			}
 
 			public object GetValue (object obj)
@@ -2078,11 +2060,11 @@ namespace Community.SQLite
 
 				for (int i = 0; i < cols.Length; i++) {
 					var name = SQLite3.ColumnName16 (stmt, i);
-					cols [i] = map.FindColumn (name);
+					cols [i] = ((TableMapping) map).FindColumn (name);
 				}
 			
 				while (SQLite3.Step (stmt) == SQLite3.Result.Row) {
-					var obj = Activator.CreateInstance(map.MappedType);
+					var obj = Activator.CreateInstance(((TableMapping)map).MappedType);
 					for (int i = 0; i < cols.Length; i++) {
 						if (cols [i] == null)
 							continue;
@@ -2429,7 +2411,7 @@ namespace Community.SQLite
 			Table = Connection.GetMapping (typeof(T));
 		}
 
-		public TableQuery<U> Clone<U> ()
+		public TableQuery<U> Clone<U> () where U : new()
 		{
 			var q = new TableQuery<U> (Connection, Table);
 			q._where = _where;
@@ -3321,17 +3303,4 @@ namespace Community.SQLite
 			Null = 5
 		}
 	}
-
-    public static class TypeExtensions
-    {
-        public static bool IsNullableEnum(this Type t)
-        {
-            Type u = Nullable.GetUnderlyingType(t);
-#if !NETFX_CORE
-            return (u != null) && u.IsEnum;
-#else
-			return (u != null) && u.GetTypeInfo().IsEnum;
-#endif
-        }
-    }
 }
