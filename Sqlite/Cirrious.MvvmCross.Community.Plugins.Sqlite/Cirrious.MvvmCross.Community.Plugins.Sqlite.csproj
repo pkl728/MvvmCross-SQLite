@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>..\..\bin\Debug\Mvx\Portable\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;USE_SQLITEPCL_RAW;USE_NEW_REFLECTION_API</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Debug\Mvx\Portable\Cirrious.MvvmCross.Community.Plugins.Sqlite.XML</DocumentationFile>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>True</Optimize>
     <OutputPath>..\..\bin\Release\Mvx\Portable\</OutputPath>
-    <DefineConstants>TRACE;USE_SQLITEPCL_RAW USE_NEW_REFLECTION_API</DefineConstants>
+    <DefineConstants>TRACE;USE_SQLITEPCL_RAW;USE_NEW_REFLECTION_API</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\bin\Release\Mvx\Portable\Cirrious.MvvmCross.Community.Plugins.Sqlite.XML</DocumentationFile>
