@@ -220,8 +220,8 @@ namespace Community.SQLite
 		/// </param>
 		public SQLiteConnection (string databasePath, SQLiteOpenFlags openFlags, bool storeDateTimeAsTicks = false)
 		{
-			if (string.IsNullOrEmpty (databasePath))
-				throw new ArgumentException ("Must be specified", "databasePath");
+			if (databasePath == null)
+                throw new ArgumentException("Cannot be null, must be specified, or empty.", "databasePath");
 
 			DatabasePath = databasePath;
 
