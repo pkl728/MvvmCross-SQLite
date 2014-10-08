@@ -412,8 +412,11 @@ namespace Community.SQLite
 
 			public void OnApplicationSuspended ()
 			{
-				Connection.Dispose ();
-				Connection = null;
+			    if (Connection != null)
+			    {
+                    Connection.Dispose();
+                    Connection = null; 
+			    }
 			}
 		}
 
