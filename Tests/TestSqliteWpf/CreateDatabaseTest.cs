@@ -8,8 +8,8 @@ using Cirrious.MvvmCross.Community.Plugins.Sqlite;
 using NUnit.Framework;
 
 #if __IOS__
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using Cirrious.MvvmCross.Community.Plugins.Sqlite.Touch;
 #elif __ANDROID__
 using Cirrious.MvvmCross.Community.Plugins.Sqlite.Droid;
