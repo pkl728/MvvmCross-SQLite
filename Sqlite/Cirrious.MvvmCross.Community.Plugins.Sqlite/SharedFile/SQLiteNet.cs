@@ -2927,7 +2927,20 @@ namespace Community.SQLite
                     text = "(" + leftr.CommandText + " " + GetSqlName(bin) + " " + rightr.CommandText + ")";
                 return new CompileResult { CommandText = text };
             }
-            else if (expr.NodeType == ExpressionType.Call)
+			else if (expr.NodeType == ExpressionType.Not) 
+			{
+				var operandExpr = ((UnaryExpression)expr).Operand;
+				var opr = CompileExpr(operandExpr, queryArgs);
+				object val = opr.Value;
+				if (val is bool)
+					val = !((bool) val);
+				return new CompileResult
+				{
+					CommandText = "NOT(" + opr.CommandText + ")",
+					Value = val
+				};
+			} 
+			else if (expr.NodeType == ExpressionType.Call)
             {
 
                 var call = (MethodCallExpression)expr;
@@ -3108,7 +3121,7 @@ namespace Community.SQLite
                 }
             }
             throw new NotSupportedException("Cannot compile: " + expr.NodeType.ToString());
-        }
+		}
 
         static object ConvertTo(object obj, Type t)
         {
